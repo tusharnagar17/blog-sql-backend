@@ -1,32 +1,23 @@
-require("dotenv").config();
-const { Sequelize, QueryTypes } = require("sequelize");
+const express = require("express");
+const app = express();
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  // use this dialer option for only heroku
-  // dialect: "postgres",
-  // dialectOptions: {
-  //   ssl: {
-  //     require: true,
-  //     rejectUnauthorized: false,
-  //   },
-  // },
-});
+const { PORT } = require("./utils/config");
+const { connectToDatabase } = require("./utils/db");
 
-const main = async () => {
-  try {
-    await sequelize.authenticate();
-    const data = await sequelize.query("SELECT * FROM blogs", {
-      type: QueryTypes.SELECT,
-    });
-    // console.log(data);
-    data.map((item) => {
-      console.log(item.author, item.title, item.likes, " likes");
-    });
-    console.log("Connection has been established successfully.");
-    sequelize.close();
-  } catch (error) {
-    console.error("Unable to connect to the database:", error);
-  }
+// routes
+const BlogRouter = require("./controllers/blogs");
+
+app.use(express.json());
+
+app.use("/api/blogs", BlogRouter);
+
+// USE =express-async-error to remove TRY-CATCH
+
+const start = async () => {
+  await connectToDatabase();
+  app.listen(PORT, () => {
+    console.log(`Server is successfully connected to :${PORT}`);
+  });
 };
 
-main();
+start();
