@@ -32,5 +32,15 @@ router.delete("/:id", async (req, res) => {
   }
   res.status(204).end();
 });
-// PUT
+// PUT => update like of post
+router.put("/:id", async (req, res) => {
+  const post = await Blog.findByPk(req.params.id);
+  if (post) {
+    post.likes = req.body.likes;
+    await post.save();
+    res.json(post);
+  } else {
+    res.status(404).end();
+  }
+});
 module.exports = router;
