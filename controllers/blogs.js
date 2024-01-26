@@ -4,43 +4,68 @@ const { Blog } = require("./../model");
 // GET
 
 router.get("/", async (req, res) => {
-  const data = await Blog.findAll();
-  // console.log(JSON.stringify(data, null, 2));
-  res.json(data);
+  try {
+    const data = await Blog.findAll();
+    // console.log(JSON.stringify(data, null, 2));
+    res.json(data);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
 });
 // GET by id
 router.get("/:id", async (req, res) => {
-  const data = await Blog.findByPk(req.params.id);
-  if (data) {
-    res.json(data);
+  try {
+    const data = await Blog.findByPk(req.params.id);
+    if (data) {
+      res.json(data);
+    }
+    res.status(404).end();
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
-  res.status(404).end();
 });
 
 // POST
 router.post("/", async (req, res) => {
-  console.log(req.body);
-  const data = await Blog.create(req.body);
-  res.status(201).json(data);
+  try {
+    console.log(req.body);
+    const data = await Blog.create(req.body);
+    res.status(201).json(data);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
 });
 
 // DEL
 router.delete("/:id", async (req, res) => {
-  const data = await Blog.findByPk(req.params.id);
-  if (data) {
-    await data.destroy();
+  try {
+    const data = await Blog.findByPk(req.params.id);
+    if (data) {
+      await data.destroy();
+    }
+    res.status(204).end();
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
-  res.status(204).end();
 });
 // PUT => update like of post
 router.put("/:id", async (req, res) => {
-  const post = await Blog.findByPk(req.params.id);
-  if (post) {
-    post.likes = req.body.likes;
-    await post.save();
-    res.json(post);
-  } else {
-    res.status(404).end();
+  try {
+    const post = await Blog.findByPk(req.params.id);
+    if (post) {
+      post.likes = req.body.likes;
+      await post.save();
+      res.json(post);
+    } else {
+      res.status(404).end();
+    }
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 module.exports = router;

@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-require("express-async-errors");
+// require("express-async-errors");
 
 const { PORT } = require("./utils/config");
 const { connectToDatabase } = require("./utils/db");
@@ -12,18 +12,16 @@ const LoginRouter = require("./controllers/login");
 
 app.use(express.json());
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something went wrong!");
-});
-
 app.use("/api/blogs", BlogRouter);
 app.use("/api/users", UserRouter);
 app.use("/api/login", LoginRouter);
 
 // USE =express-async-error to remove TRY-CATCH
-
+// Error handling middleware
+// app.use((err, req, res, next) => {
+//   console.error(err.stack);
+//   res.status(500).send("Something went wrong!");
+// });
 const start = async () => {
   await connectToDatabase();
   app.listen(PORT, () => {
